@@ -1,0 +1,22 @@
+{
+  "name": "telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot on Nodejs",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://verve-neowise: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@github.com/verve-neowise/telegram-bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/verve-neowise/telegram-bot/issues"
+  },
+  "homepage": "https://github.com/verve-neowise/telegram-bot#readme",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.56.0"
+  }
+}
