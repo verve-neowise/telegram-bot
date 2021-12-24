@@ -1,0 +1,3 @@
+
+bot.sendPhoto(msg.chat.id, __dirname + "/images/preved.jpg", { caption: welcome } )
+
