@@ -1,3 +1,9 @@
 
 bot.sendPhoto(msg.chat.id, __dirname + "/images/preved.jpg", { caption: welcome } )
 
+
+const startKeyboard = {
+    inline_keyboard: [
+        [ { text: "Start", callback_data: "start" } ]
+    ]
+}
