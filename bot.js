@@ -23,72 +23,67 @@ function createUser(id) {
 }
 
 const users = {}
+// id : user
 
 bot.on('message', (msg) => {
-    if (msg.text === "/start") {
-        const keyboard = {
-            inline_keyboard: [ 
-                [ { text: "Start" , callback_data: "start" } ]
-            ]
+
+    let user = findUser(msg)
+
+    if (msg.text === '/start') {
+        onStart(msg)
+    }
+    else if (user) {
+        if (user.step === steps.NAME) {
+            onName(msg)
         }
-        bot.sendMessage(msg.chat.id, "Salom men Anketa bot man, davom qildasmi?", { reply_markup: keyboard  })
     }
     else {
-
-        const user = users[msg.from.id]
-
-        if (user.step === steps.NAME) {
-            user.name = msg.text
-            
-            const keyboard = {
-                inline_keyboard: [ 
-                    [ { text: "Erkak" , callback_data: "male" }, {text : "Ayol", callback_data: "female" } ]
-                ]
-            }
-
-            bot.req
-
-            bot.sendMessage(msg.chat.id, "Jinsingizni tanlang:", { reply_markup: keyboard })
-            bot.deleteMessage(msg.chat.id, msg.message_id)
-
-            user.step = steps.GENDER;
-        }
+        bot.sendMessage(msg.chat.id, '/start bosing!')
     }
 })
 
 bot.on("callback_query", (query) => {
-    if (query.data === "start") {
-        const id = query.from.id
-        const user = createUser(id)
-        users[id] = user
-
-        bot.sendMessage(query.message.chat.id, "Ismingizni kiriting!")
-
-        bot.deleteMessage(query.message.chat.id, query.message.message_id)
-        user.step = steps.NAME;
-    }
-    else {
-
-        const user = users[query.from.id]
-
-        if (user.step === steps.GENDER) {
-            user.gender = query.data
-
-            bot.sendMessage(query.message.chat.id, "Telefon raqaminingizni kiriting:", {
-                reply_markup: {
-                    keyboard: [
-                        [{text: "Send Contact", callback_data: "send_contact", request_contact: true}]
-                    ]
-                }
-            })
-            bot.deleteMessage(query.message.chat.id, query.message.message_id)
-
-            user.step = steps.PHONE
-        }
-    }
+    bot.sendMessage(msg.chat.id, '!! Uzur, bot toligligicha ishlamaydi!')
 })
 
 bot.on("contact", (msg, metadata) => {
-    console.log(msg);
-    console.log(metadata);
+    bot.sendMessage(msg.chat.id, '!!Uzur, bot toligligicha ishlamaydi!')
 })
+
+function onStart(msg) {
+    let user = authorizeUser(msg)
+    requireName(user, msg)
+}
+
+function onName(msg) {
+    let user = findUser(msg)
+    user.name = msg.text
+
+    requireGender(user, msg)
+}
+
+function requireName(user, msg) {
+    bot.sendMessage(msg.chat.id, "Ismingizni kiriting")
+    user.step = steps.NAME
+}
+
+function requireGender(user, msg) {
+    let genders = {
+        inline_keyboard : [
+            [ {text: "Male", callback_data: "male"}, {text: "Female", callback_data: "female"} ]
+        ]
+    }
+    bot.sendMessage(msg.chat.id, "Genderni tanlang:", { reply_markup: genders })
+    user.step = steps.GENDER
+}
+
+function findUser(msg) {
+    return users[msg.chat.id]
+}
+
+function authorizeUser(msg) {
+    const user = createUser(msg.chat.id)
+    users[msg.chat.id] = user
+
+    return user
+}
