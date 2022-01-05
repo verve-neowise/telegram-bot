@@ -18,6 +18,7 @@
   "homepage": "https://github.com/verve-neowise/telegram-bot#readme",
   "dependencies": {
     "dotenv": "^10.0.0",
+    "mongoose": "^6.1.5",
     "node-telegram-bot-api": "^0.56.0"
   }
 }

@@ -1,5 +1,7 @@
 require('dotenv').config()
 
+const { User } = require('./db')
+
 const TelegramBot = require('node-telegram-bot-api')
 
 const bot = new TelegramBot(process.env.token, { polling: true })
@@ -63,7 +65,7 @@ bot.on("contact", (msg, metadata) => {
 
     if (user) {
         if (user.step === steps.PHONE) {
-            onContact(msg, msg.contact)
+            onContact(msg, msg.contact.phone_number)
         }
     }
 })
@@ -79,6 +81,7 @@ function onName(msg) {
 
     requireGender(user, msg)
 }
+
 
 function onGender(msg, gender) {
 
@@ -146,7 +149,35 @@ function requireAddress(user, msg) {
 }
 
 function complete(user, msg) {
-    bot.sendMessage(process.env.adminID, "Siz royhatdan otdingiz\n" + JSON.stringify(user))
+    bot.sendMessage(msg.chat.id, "Siz royhatdan otdingiz!")
+
+    sendToAdmin(user)
+    sendToDatabase(user)
+}
+
+
+function sendToAdmin(user) {
+    const message = `Янги фойдаланувчи, ${user.name}\n` +
+                    `Жинси: ${user.gender} \n`+
+                    `Email: ${user.email}\n`+
+                    `Адрес: ${user.address}\n` +
+                    `Телефон: ${user.phone}`;
+
+    bot.sendMessage(process.env.adminID, message)
+}
+
+function sendToDatabase(user) {
+    
+    const dbUser = User({
+        chatId: user.id,
+        name: user.name,
+        gender: user.gender,
+        phone: user.phone,
+        email: user.email,
+        address: user.address
+    })
+
+    dbUser.save()
 }
 
 function findUser(msg) { // user | undefined
